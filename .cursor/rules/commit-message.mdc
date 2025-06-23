@@ -1,0 +1,14 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Commit Message Linting Rules
+
+This project enforces the following commit message rules:
+
+- **Header length**: The commit message header must not exceed 72 characters.
+- **Type**: The commit message must start with a type (e.g., `feat`, `fix`, `docs`, etc.). The type must not be empty.
+- **Subject**: The subject (after the type) must not be empty and must not end with a full stop (`.`).
+
+For more details, see the [commitlint documentation](https://github.com/conventional-changelog/commitlint/#what-is-commitlint).
