@@ -51,6 +51,15 @@ const fileSaver = async (filepath: string, data: any): Promise<void> => {
   }
 }
 
+function getImageTarget(valuesFile: ImageValues, chart?: string) {
+  const target = chart ? valuesFile[chart] : valuesFile
+  if (!target || !target.image) {
+    console.error(`Error: Cannot find 'image' section for chart "${chart || 'root'}".`)
+    return null
+  }
+  return target
+}
+
 program
   .command('image')
   .description('Update image version and/or repository in a values.yaml file')
@@ -116,12 +125,8 @@ program
   .action(async (options) => {
     const { file, version, chart } = options
     const valuesFile = await fileLoader<ImageValues>(file)
-    const target = chart ? valuesFile[chart] : valuesFile
-
-    if (!target || !target.image) {
-      console.error(`Error: Cannot find 'image' section for chart "${chart || 'root'}".`)
-      return
-    }
+    const target = getImageTarget(valuesFile, chart)
+    if (!target) return
 
     if (version !== target.image.tag) {
       target.image.tag = version
@@ -143,12 +148,8 @@ program
   .action(async (options) => {
     const { file, repository, chart } = options
     const valuesFile = await fileLoader<ImageValues>(file)
-    const target = chart ? valuesFile[chart] : valuesFile
-
-    if (!target || !target.image) {
-      console.error(`Error: Cannot find 'image' section for chart "${chart || 'root'}".`)
-      return
-    }
+    const target = getImageTarget(valuesFile, chart)
+    if (!target) return
 
     if (repository !== target.image.repository) {
       target.image.repository = repository
