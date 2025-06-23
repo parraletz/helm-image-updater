@@ -27,7 +27,7 @@ jobs:
           node-version: "20.x"
 
       - name: Install dependencies
-        run: pnpm i
+        run: npm i
 
       - name: Super-linter
         uses: super-linter/super-linter@v7.4.0
