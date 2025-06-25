@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { Command } from 'commander'
+import { Command, Option } from 'commander'
 import { constants as fsConstants } from 'fs'
 import * as fs from 'fs/promises'
 import * as yaml from 'js-yaml'
@@ -63,10 +63,26 @@ function getImageTarget(valuesFile: ImageValues, chart?: string) {
 program
   .command('image')
   .description('Update image version and/or repository in a values.yaml file')
-  .requiredOption('-f, --file <path>', 'Path to the values.yaml file')
-  .option('-v, --version <version>', 'New version to set in values.yaml')
-  .option('-r, --repository <repository>', 'New repository to set in values.yaml')
-  .option('-c, --chart <chart>', 'Chart to update in the values file (for subcharts)')
+  .addOption(
+    new Option('-f, --file <path>', 'Path to the values.yaml file')
+      .env('HELM_IMAGE_UPDATER_FILE')
+      .makeOptionMandatory(),
+  )
+  .addOption(
+    new Option('-v, --version <version>', 'New version to set in values.yaml').env(
+      'HELM_IMAGE_UPDATER_VERSION',
+    ),
+  )
+  .addOption(
+    new Option('-r, --repository <repository>', 'New repository to set in values.yaml').env(
+      'HELM_IMAGE_UPDATER_REPOSITORY',
+    ),
+  )
+  .addOption(
+    new Option('-c, --chart <chart>', 'Chart to update in the values file (for subcharts)').env(
+      'HELM_IMAGE_UPDATER_CHART',
+    ),
+  )
   .action(async (options) => {
     const { file, version, repository, chart } = options
 
@@ -119,9 +135,21 @@ program
 program
   .command('tag')
   .description('Update image tag in a values.yaml file')
-  .requiredOption('-f, --file <path>', 'Path to the values.yaml file')
-  .requiredOption('-v, --version <version>', 'New version to set in values.yaml')
-  .option('-c, --chart <chart>', 'Chart to update in the values file (for subcharts)')
+  .addOption(
+    new Option('-f, --file <path>', 'Path to the values.yaml file')
+      .env('HELM_IMAGE_UPDATER_FILE')
+      .makeOptionMandatory(),
+  )
+  .addOption(
+    new Option('-v, --version <version>', 'New version to set in values.yaml')
+      .env('HELM_IMAGE_UPDATER_VERSION')
+      .makeOptionMandatory(),
+  )
+  .addOption(
+    new Option('-c, --chart <chart>', 'Chart to update in the values file (for subcharts)').env(
+      'HELM_IMAGE_UPDATER_CHART',
+    ),
+  )
   .action(async (options) => {
     const { file, version, chart } = options
     const valuesFile = await fileLoader<ImageValues>(file)
@@ -142,9 +170,21 @@ program
 program
   .command('repository')
   .description('Update image repository in a values.yaml file')
-  .requiredOption('-f, --file <path>', 'Path to the values.yaml file')
-  .requiredOption('-r, --repository <repository>', 'New repository to set in values.yaml')
-  .option('-c, --chart <chart>', 'Chart to update in the values file (for subcharts)')
+  .addOption(
+    new Option('-f, --file <path>', 'Path to the values.yaml file')
+      .env('HELM_IMAGE_UPDATER_FILE')
+      .makeOptionMandatory(),
+  )
+  .addOption(
+    new Option('-r, --repository <repository>', 'New repository to set in values.yaml')
+      .env('HELM_IMAGE_UPDATER_REPOSITORY')
+      .makeOptionMandatory(),
+  )
+  .addOption(
+    new Option('-c, --chart <chart>', 'Chart to update in the values file (for subcharts)').env(
+      'HELM_IMAGE_UPDATER_CHART',
+    ),
+  )
   .action(async (options) => {
     const { file, repository, chart } = options
     const valuesFile = await fileLoader<ImageValues>(file)
@@ -167,8 +207,16 @@ program
 program
   .command('chart')
   .description('Update appVersion in a Chart.yaml file')
-  .requiredOption('-f, --file <path>', 'Path to the Chart.yaml file')
-  .requiredOption('-v, --version <version>', 'New appVersion to set')
+  .addOption(
+    new Option('-f, --file <path>', 'Path to the Chart.yaml file')
+      .env('HELM_IMAGE_UPDATER_FILE')
+      .makeOptionMandatory(),
+  )
+  .addOption(
+    new Option('-v, --version <version>', 'New appVersion to set')
+      .env('HELM_IMAGE_UPDATER_VERSION')
+      .makeOptionMandatory(),
+  )
   .action(async (options) => {
     const { file, version } = options
     const chartFile = await fileLoader<ChartFile>(file)
