@@ -24,7 +24,7 @@ program
   .name('helm-image-updater')
   .description('CLI to update image repository/tag in Helm values files')
 
-const fileLoader = async <T>(filepath: string): Promise<T> => {
+export const fileLoader = async <T>(filepath: string): Promise<T> => {
   try {
     await fs.access(filepath, fsConstants.R_OK | fsConstants.W_OK)
     const fileContents = await fs.readFile(filepath, 'utf8')
@@ -37,17 +37,17 @@ const fileLoader = async <T>(filepath: string): Promise<T> => {
     } else {
       console.error(`An unexpected error occurred while loading the file: ${error.message}`)
     }
-    process.exit(1)
+    throw error
   }
 }
 
-const fileSaver = async (filepath: string, data: any): Promise<void> => {
+export const fileSaver = async (filepath: string, data: any): Promise<void> => {
   try {
     const yamlString = yaml.dump(data)
     await fs.writeFile(filepath, yamlString, 'utf8')
   } catch (error: any) {
     console.error(`An unexpected error occurred while saving the file: ${error.message}`)
-    process.exit(1)
+    throw error
   }
 }
 
@@ -237,4 +237,7 @@ program
     }
   })
 
-program.parse(process.argv)
+// Only execute the CLI when this file is run directly, not when it is imported (e.g., in tests)
+if (require.main === module) {
+  program.parse(process.argv)
+}
