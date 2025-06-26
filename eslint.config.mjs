@@ -40,6 +40,8 @@ export default defineConfig([
       sourceType: 'module'
     },
 
+    ignores: ['**/dist/', '**/node_modules/', '*.yaml', '*.yml', '**/**/.eslintrc.yml'],
+
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       '@stylistic/comma-dangle': 'off'
