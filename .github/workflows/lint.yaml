@@ -37,4 +37,4 @@ jobs:
           VALIDATE_TYPESCRIPT_ES: false
           VALIDATE_TYPESCRIPT_PRETTIER: false
           VALIDATE_TYPESCRIPT_STANDARD: false
-          FILTER_REGEX_EXCLUDE: (^|/)\\.eslintrc\\.yml$
+          FILTER_REGEX_EXCLUDE: /action/lib/.automation/.eslintrc.yml
