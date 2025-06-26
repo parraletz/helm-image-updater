@@ -33,8 +33,8 @@ jobs:
         uses: super-linter/super-linter@v7.4.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_ERR_UNKNOWN_FILE_EXTENSION: false
           VALIDATE_JSON: false
           VALIDATE_TYPESCRIPT_ES: false
           VALIDATE_TYPESCRIPT_PRETTIER: false
           VALIDATE_TYPESCRIPT_STANDARD: false
+          FILTER_REGEX_EXCLUDE: (^|/)\\.eslintrc\\.yml$
