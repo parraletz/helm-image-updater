@@ -1,0 +1,45 @@
+name: 'Helm Image Updater'
+description: 'Update image repositories and tags in Helm Chart values.yaml files and appVersion in Chart.yaml files'
+author: 'parraletz'
+branding:
+  icon: 'edit'
+  color: 'blue'
+
+inputs:
+  command:
+    description: 'Command to run (image, tag, repository, chart)'
+    required: true
+  file:
+    description: 'Path to the YAML file (values.yaml or Chart.yaml)'
+    required: true
+  version:
+    description: 'Version/tag to update'
+    required: false
+  repository:
+    description: 'Repository to update'
+    required: false
+  chart:
+    description: 'Chart name for subcharts (only for values.yaml operations)'
+    required: false
+
+outputs:
+  success:
+    description: 'Whether the operation was successful'
+  message:
+    description: 'Operation result message'
+  updated:
+    description: 'Whether any files were actually updated'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.command }}
+    - '--file'
+    - ${{ inputs.file }}
+    - ${{ inputs.version && '--version' || '' }}
+    - ${{ inputs.version || '' }}
+    - ${{ inputs.repository && '--repository' || '' }}
+    - ${{ inputs.repository || '' }}
+    - ${{ inputs.chart && '--chart' || '' }}
+    - ${{ inputs.chart || '' }}

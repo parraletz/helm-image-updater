@@ -1,0 +1,49 @@
+name: Test Helm Image Updater Action
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/actions/helm-image-updater/**'
+
+jobs:
+  test-action:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build project
+        run: |
+          npm ci
+          npm run build
+
+      - name: Create test values.yaml
+        run: |
+          mkdir -p test-files
+          cat > test-files/values.yaml << 'EOF'
+          image:
+            repository: nginx
+            tag: "1.20"
+          EOF
+
+      - name: Test image command
+        uses: ./.github/actions/helm-image-updater
+        with:
+          command: image
+          file: test-files/values.yaml
+          version: "1.21"
+          repository: "nginx-updated"
+
+      - name: Verify changes
+        run: |
+          echo "Checking updated values.yaml:"
+          cat test-files/values.yaml
+          
+          # Verify the changes were applied
+          if grep -q "nginx-updated" test-files/values.yaml && grep -q "1.21" test-files/values.yaml; then
+            echo "✅ Action test passed - image updated successfully"
+          else
+            echo "❌ Action test failed - image not updated"
+            exit 1
+          fi

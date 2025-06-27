@@ -51,6 +51,201 @@ export const fileSaver = async (filepath: string, data: any): Promise<void> => {
   }
 }
 
+interface UpdateResult {
+  success: boolean
+  message: string
+  updated: boolean
+}
+
+export async function updateImage(options: {
+  file: string
+  version?: string
+  repository?: string
+  chart?: string
+}): Promise<UpdateResult> {
+  const { file, version, repository, chart } = options
+
+  try {
+    if (!version && !repository) {
+      return {
+        success: false,
+        message: 'Should set a value for version or/and repository',
+        updated: false
+      }
+    }
+
+    const valuesFile = await fileLoader<ImageValues>(file)
+    let updated = false
+
+    const target = chart ? valuesFile[chart] : valuesFile
+
+    if (!target || !target.image) {
+      return {
+        success: false,
+        message: `Error: Cannot find 'image' section for chart "${chart || 'root'}".`,
+        updated: false
+      }
+    }
+
+    if (version) {
+      if (version !== target.image.tag) {
+        target.image.tag = version
+        updated = true
+      }
+    }
+
+    if (repository) {
+      if (repository !== target.image.repository) {
+        target.image.repository = repository
+        updated = true
+      }
+    }
+
+    if (updated) {
+      await fileSaver(file, valuesFile)
+    }
+
+    return {
+      success: true,
+      message: updated ? 'Image updated successfully' : 'No changes needed',
+      updated
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message,
+      updated: false
+    }
+  }
+}
+
+export async function updateTag(options: {
+  file: string
+  version: string
+  chart?: string
+}): Promise<UpdateResult> {
+  const { file, version, chart } = options
+
+  try {
+    const valuesFile = await fileLoader<ImageValues>(file)
+    const target = getImageTarget(valuesFile, chart)
+
+    if (!target) {
+      return {
+        success: false,
+        message: `Error: Cannot find 'image' section for chart "${chart || 'root'}".`,
+        updated: false
+      }
+    }
+
+    if (version !== target.image.tag) {
+      target.image.tag = version
+      await fileSaver(file, valuesFile)
+      return {
+        success: true,
+        message: `Version ${version} has been set successfully${chart ? ` in the chart ${chart}` : ''}.`,
+        updated: true
+      }
+    } else {
+      return {
+        success: true,
+        message: `New version ${version} is the same as the one in the values.yaml.`,
+        updated: false
+      }
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message,
+      updated: false
+    }
+  }
+}
+
+export async function updateRepository(options: {
+  file: string
+  repository: string
+  chart?: string
+}): Promise<UpdateResult> {
+  const { file, repository, chart } = options
+
+  try {
+    const valuesFile = await fileLoader<ImageValues>(file)
+    const target = getImageTarget(valuesFile, chart)
+
+    if (!target) {
+      return {
+        success: false,
+        message: `Error: Cannot find 'image' section for chart "${chart || 'root'}".`,
+        updated: false
+      }
+    }
+
+    if (repository !== target.image.repository) {
+      target.image.repository = repository
+      await fileSaver(file, valuesFile)
+      return {
+        success: true,
+        message: `Repository ${repository} has been set successfully${chart ? ` in the chart ${chart}` : ''}.`,
+        updated: true
+      }
+    } else {
+      return {
+        success: true,
+        message: `New repository ${repository} is the same as the one in the values.yaml.`,
+        updated: false
+      }
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message,
+      updated: false
+    }
+  }
+}
+
+export async function updateChart(options: {
+  file: string
+  version: string
+}): Promise<UpdateResult> {
+  const { file, version } = options
+
+  try {
+    const chartFile = await fileLoader<ChartFile>(file)
+
+    if (!chartFile.appVersion) {
+      return {
+        success: false,
+        message: `Error: The file ${file} does not seem to be a valid Chart.yaml (missing 'appVersion').`,
+        updated: false
+      }
+    }
+
+    if (version !== chartFile.appVersion) {
+      chartFile.appVersion = version
+      await fileSaver(file, chartFile)
+      return {
+        success: true,
+        message: `appVersion ${version} has been set successfully in ${file}.`,
+        updated: true
+      }
+    } else {
+      return {
+        success: true,
+        message: `New appVersion ${version} is the same as the one in the chart file.`,
+        updated: false
+      }
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message,
+      updated: false
+    }
+  }
+}
+
 function getImageTarget(valuesFile: ImageValues, chart?: string) {
   const target = chart ? valuesFile[chart] : valuesFile
   if (!target || !target.image) {

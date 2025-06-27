@@ -19,10 +19,10 @@ const config: UserConfig = {
         'ci',
         'chore',
         'revert',
-        'wip',
-      ],
-    ],
-  },
+        'wip'
+      ]
+    ]
+  }
 }
 
 export default config

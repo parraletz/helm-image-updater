@@ -7,8 +7,8 @@ describe('fileLoader and fileSaver', () => {
   const testData = {
     image: {
       repository: 'repo/test',
-      tag: '1.0.0',
-    },
+      tag: '1.0.0'
+    }
   }
 
   afterEach(async () => {
