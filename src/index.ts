@@ -66,22 +66,22 @@ program
   .addOption(
     new Option('-f, --file <path>', 'Path to the values.yaml file')
       .env('HELM_IMAGE_UPDATER_FILE')
-      .makeOptionMandatory(),
+      .makeOptionMandatory()
   )
   .addOption(
     new Option('-v, --version <version>', 'New version to set in values.yaml').env(
-      'HELM_IMAGE_UPDATER_VERSION',
-    ),
+      'HELM_IMAGE_UPDATER_VERSION'
+    )
   )
   .addOption(
     new Option('-r, --repository <repository>', 'New repository to set in values.yaml').env(
-      'HELM_IMAGE_UPDATER_REPOSITORY',
-    ),
+      'HELM_IMAGE_UPDATER_REPOSITORY'
+    )
   )
   .addOption(
     new Option('-c, --chart <chart>', 'Chart to update in the values file (for subcharts)').env(
-      'HELM_IMAGE_UPDATER_CHART',
-    ),
+      'HELM_IMAGE_UPDATER_CHART'
+    )
   )
   .action(async (options) => {
     const { file, version, repository, chart } = options
@@ -105,7 +105,7 @@ program
       if (version !== target.image.tag) {
         target.image.tag = version
         console.log(
-          `Version ${version} has been set successfully${chart ? ` in the chart ${chart}` : ''}.`,
+          `Version ${version} has been set successfully${chart ? ` in the chart ${chart}` : ''}.`
         )
         updated = true
       } else {
@@ -119,7 +119,7 @@ program
         console.log(
           `Repository ${repository} has been set successfully${
             chart ? ` in the chart ${chart}` : ''
-          }.`,
+          }.`
         )
         updated = true
       } else {
@@ -138,17 +138,17 @@ program
   .addOption(
     new Option('-f, --file <path>', 'Path to the values.yaml file')
       .env('HELM_IMAGE_UPDATER_FILE')
-      .makeOptionMandatory(),
+      .makeOptionMandatory()
   )
   .addOption(
     new Option('-v, --version <version>', 'New version to set in values.yaml')
       .env('HELM_IMAGE_UPDATER_VERSION')
-      .makeOptionMandatory(),
+      .makeOptionMandatory()
   )
   .addOption(
     new Option('-c, --chart <chart>', 'Chart to update in the values file (for subcharts)').env(
-      'HELM_IMAGE_UPDATER_CHART',
-    ),
+      'HELM_IMAGE_UPDATER_CHART'
+    )
   )
   .action(async (options) => {
     const { file, version, chart } = options
@@ -160,7 +160,7 @@ program
       target.image.tag = version
       await fileSaver(file, valuesFile)
       console.log(
-        `Version ${version} has been set successfully${chart ? ` in the chart ${chart}` : ''}.`,
+        `Version ${version} has been set successfully${chart ? ` in the chart ${chart}` : ''}.`
       )
     } else {
       console.log(`New version ${version} is the same as the one in the values.yaml.`)
@@ -173,17 +173,17 @@ program
   .addOption(
     new Option('-f, --file <path>', 'Path to the values.yaml file')
       .env('HELM_IMAGE_UPDATER_FILE')
-      .makeOptionMandatory(),
+      .makeOptionMandatory()
   )
   .addOption(
     new Option('-r, --repository <repository>', 'New repository to set in values.yaml')
       .env('HELM_IMAGE_UPDATER_REPOSITORY')
-      .makeOptionMandatory(),
+      .makeOptionMandatory()
   )
   .addOption(
     new Option('-c, --chart <chart>', 'Chart to update in the values file (for subcharts)').env(
-      'HELM_IMAGE_UPDATER_CHART',
-    ),
+      'HELM_IMAGE_UPDATER_CHART'
+    )
   )
   .action(async (options) => {
     const { file, repository, chart } = options
@@ -197,7 +197,7 @@ program
       console.log(
         `Repository ${repository} has been set successfully${
           chart ? ` in the chart ${chart}` : ''
-        }.`,
+        }.`
       )
     } else {
       console.log(`New repository ${repository} is the same as the one in the values.yaml.`)
@@ -210,12 +210,12 @@ program
   .addOption(
     new Option('-f, --file <path>', 'Path to the Chart.yaml file')
       .env('HELM_IMAGE_UPDATER_FILE')
-      .makeOptionMandatory(),
+      .makeOptionMandatory()
   )
   .addOption(
     new Option('-v, --version <version>', 'New appVersion to set')
       .env('HELM_IMAGE_UPDATER_VERSION')
-      .makeOptionMandatory(),
+      .makeOptionMandatory()
   )
   .action(async (options) => {
     const { file, version } = options
@@ -223,7 +223,7 @@ program
 
     if (!chartFile.appVersion) {
       console.error(
-        `Error: The file ${file} does not seem to be a valid Chart.yaml (missing 'appVersion').`,
+        `Error: The file ${file} does not seem to be a valid Chart.yaml (missing 'appVersion').`
       )
       return
     }
